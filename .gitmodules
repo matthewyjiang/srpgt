@@ -1,0 +1,3 @@
+[submodule "SafeOpt"]
+	path = SafeOpt
+	url = git@github.com:matthewyjiang/SafeOpt.git
