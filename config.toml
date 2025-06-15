@@ -1,5 +1,5 @@
 [environment]
-FILENAME = "terrain.csv"
+FILENAME = "data/terrain.csv"
 THRESHOLD = 500
 SIMPLIFICATION_CONSTANT = 4
 MODE = "semnav"
