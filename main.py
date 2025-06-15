@@ -365,7 +365,7 @@ def draw_environment(screen, surf, polygon_list, local_workspace_polygon, enclos
     GREEN = (0, 255, 0)
     LIGHT_BLUE = (173, 216, 230)
     BLUE = (0, 0, 255)
-    PINK = (255, 105, 180)
+    PURPLE = (128, 0, 128)
 
     # Clear the screen
     screen.fill(WHITE)
@@ -384,10 +384,10 @@ def draw_environment(screen, surf, polygon_list, local_workspace_polygon, enclos
         pygame.draw.polygon(screen, BLACK, np.array([x, y]).T * BUFFER_SIZE)
 
     # Draw next parameters
-    pygame.draw.circle(screen, PINK,
+    pygame.draw.circle(screen, PURPLE,
                       (int(next_parameters[0])*BUFFER_SIZE,
                        int(next_parameters[1])*BUFFER_SIZE),
-                      2*BUFFER_SIZE)
+                      4*BUFFER_SIZE)
 
 
 def modify_next_parameters(next_parameters, robot, polygon_list):
@@ -457,6 +457,7 @@ def main():
     LIGHT_BLUE = (173, 216, 230)
     BLUE = (0, 0, 255)
     PINK = (255, 105, 180)
+    PURPLE = (128, 0, 128)
 
     # Robot settings
     ROBOT_RADIUS = CONFIG["robot"]["ROBOT_RADIUS"]
@@ -570,7 +571,7 @@ def main():
             for i, value in enumerate(opt.G):
                 if value:
                     x, y = parameter_set[i]
-                    pygame.draw.circle(screen, RED, (int(x)*BUFFER_SIZE, int(y)*BUFFER_SIZE), 2*BUFFER_SIZE)
+                    pygame.draw.circle(screen, RED, (int(x)*BUFFER_SIZE, int(y)*BUFFER_SIZE), 1*BUFFER_SIZE)
 
 
 
@@ -589,7 +590,7 @@ def main():
 
                 if np.linalg.norm(u) < 0.1 and connected:
                     if can_collage:
-                        create_collage(frames, "collage.png", columns=3, num_frames=9)
+                        create_collage(frames, "collage.png", columns=CONFIG["display"]["COLUMNS"], num_frames=CONFIG["display"]["FRAMECOUNT"])
                         can_collage = False
 
 
@@ -656,7 +657,7 @@ def main():
             capture_flag = False
 
         if frame_count >= CONFIG["display"]["FRAMECOUNT"] and can_collage:
-            create_collage(frames, "collage.png", columns=3, num_frames=9)
+            create_collage(frames, "collage.png", columns=CONFIG["display"]["COLUMNS"], num_frames=CONFIG["display"]["FRAMECOUNT"])
             frame_count = 0
 
 

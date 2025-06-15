@@ -28,17 +28,9 @@ SOFTWARE.
 """
 from __future__ import division
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-import time
-import itertools
 import shapely as sp
-from matplotlib.collections import PatchCollection
 from shapely.geometry import Polygon, Point, LineString, LinearRing
-from shapely.ops import cascaded_union
-from scipy.spatial import ConvexHull
-from scipy.signal import butter, lfilter
-from operator import itemgetter
+
 
 # Geometry imports
 from polygeom_lib import cvxpolyxhplane, cvxpolyerode, polydist, polyxline, inpolygon, cvxpolyintersect, polyxray
