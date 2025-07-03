@@ -18,7 +18,7 @@ double polygon_signed_area(const Polygon& poly) {
     
     for (size_t i = 0; i < n; ++i) {
         size_t j = (i + 1) % n;
-        area += poly[i].x * poly[j].y - poly[j].x * poly[i].y;
+        area += poly[i].x() * poly[j].y() - poly[j].x() * poly[i].y();
     }
     
     return area * 0.5;
@@ -35,8 +35,8 @@ bool point_in_polygon(const Point2D& point, const Polygon& poly) {
     size_t n = poly.size();
     
     for (size_t i = 0, j = n - 1; i < n; j = i++) {
-        if (((poly[i].y > point.y) != (poly[j].y > point.y)) &&
-            (point.x < (poly[j].x - poly[i].x) * (point.y - poly[i].y) / (poly[j].y - poly[i].y) + poly[i].x)) {
+        if (((poly[i].y() > point.y()) != (poly[j].y() > point.y())) &&
+            (point.x() < (poly[j].x() - poly[i].x()) * (point.y() - poly[i].y()) / (poly[j].y() - poly[i].y()) + poly[i].x())) {
             inside = !inside;
         }
     }
@@ -56,7 +56,7 @@ double point_to_polygon_distance(const Point2D& point, const Polygon& poly) {
         Vector2D edge = poly[j] - poly[i];
         Vector2D to_point = point - poly[i];
         
-        double edge_length_sq = edge.x * edge.x + edge.y * edge.y;
+        double edge_length_sq = edge.x() * edge.x() + edge.y() * edge.y();
         if (edge_length_sq < EPS) {
             // Degenerate edge, just point distance
             min_dist = std::min(min_dist, distance(point, poly[i]));
@@ -123,8 +123,8 @@ Polygon convex_hull(const std::vector<Point2D>& points) {
     // Find bottom-most point (and leftmost in case of tie)
     size_t min_idx = 0;
     for (size_t i = 1; i < sorted_points.size(); ++i) {
-        if (sorted_points[i].y < sorted_points[min_idx].y ||
-            (sorted_points[i].y == sorted_points[min_idx].y && sorted_points[i].x < sorted_points[min_idx].x)) {
+        if (sorted_points[i].y() < sorted_points[min_idx].y() ||
+            (sorted_points[i].y() == sorted_points[min_idx].y() && sorted_points[i].x() < sorted_points[min_idx].x())) {
             min_idx = i;
         }
     }
@@ -180,8 +180,8 @@ Polygon erode_convex_polygon(const Polygon& poly, double radius) {
         edge2 = edge2.normalized();
         
         // Calculate inward normals
-        Vector2D normal1(-edge1.y, edge1.x);
-        Vector2D normal2(-edge2.y, edge2.x);
+        Vector2D normal1(-edge1.y(), edge1.x());
+        Vector2D normal2(-edge2.y(), edge2.x());
         
         // Move vertex inward by radius along bisector
         Vector2D bisector = (normal1 + normal2).normalized();

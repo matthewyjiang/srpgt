@@ -3,6 +3,7 @@
 #include "reactive_planner.h"
 #include "disjoint_set.h"
 #include "config.h"
+#include "gaussian_optimization.h"
 #include <iostream>
 #include <cassert>
 #include <cmath>
@@ -16,12 +17,12 @@ void test_point2d() {
     Point2D p2(1, 1);
     
     Point2D sum = p1 + p2;
-    assert(std::abs(sum.x - 4.0) < EPS);
-    assert(std::abs(sum.y - 5.0) < EPS);
+    assert(std::abs(sum.x() - 4.0) < EPS);
+    assert(std::abs(sum.y() - 5.0) < EPS);
     
     Point2D diff = p1 - p2;
-    assert(std::abs(diff.x - 2.0) < EPS);
-    assert(std::abs(diff.y - 3.0) < EPS);
+    assert(std::abs(diff.x() - 2.0) < EPS);
+    assert(std::abs(diff.y() - 3.0) < EPS);
     
     double norm = p1.norm();
     assert(std::abs(norm - 5.0) < EPS);
@@ -35,8 +36,8 @@ void test_robot() {
     Robot robot(10, 20, 2.0);
     
     // Test initial position
-    assert(std::abs(robot.position().x - 10.0) < EPS);
-    assert(std::abs(robot.position().y - 20.0) < EPS);
+    assert(std::abs(robot.position().x() - 10.0) < EPS);
+    assert(std::abs(robot.position().y() - 20.0) < EPS);
     assert(std::abs(robot.radius() - 2.0) < EPS);
     
     // Test movement
@@ -44,7 +45,7 @@ void test_robot() {
     robot.update(velocity);
     
     // Position should have changed
-    assert(robot.position().x > 10.0);
+    assert(robot.position().x() > 10.0);
     assert(robot.trail().size() > 0);
     
     std::cout << "Robot tests passed!" << std::endl;
@@ -129,9 +130,52 @@ void test_reactive_planner() {
     // Test triangle diffeomorphism
     Point2D transformed = reactive_planner::triangle_diffeo(position, triangle, params);
     // Should return a valid point
-    assert(!std::isnan(transformed.x) && !std::isnan(transformed.y));
+    assert(!std::isnan(transformed.x()) && !std::isnan(transformed.y()));
     
     std::cout << "Reactive planner tests passed!" << std::endl;
+}
+
+void test_gaussian_optimization() {
+    std::cout << "Testing Gaussian optimization..." << std::endl;
+    
+    GPOptimizationParams params;
+    params.kernel_variance = 1.0;
+    params.kernel_lengthscale = 1.0;
+    params.beta = 2.0;
+    params.threshold = 0.0;
+    
+    GaussianOptimizer optimizer(params);
+    
+    // Set parameter bounds
+    optimizer.set_parameter_bounds(0, 10, 0, 10, 10);
+    
+    // Create some training data
+    std::vector<Point2D> training_points = {
+        Point2D(1, 1), Point2D(2, 2), Point2D(3, 3)
+    };
+    std::vector<double> training_values = {1.0, 2.0, 3.0};
+    
+    optimizer.initialize(training_points, training_values);
+    
+    // Test prediction
+    auto prediction = optimizer.predict(Point2D(2.5, 2.5));
+    assert(!std::isnan(prediction.first));
+    assert(!std::isnan(prediction.second));
+    assert(prediction.second > 0); // Uncertainty should be positive
+    
+    // Test getting next sample
+    Point2D goal(5, 5);
+    Point2D next_sample = optimizer.get_next_sample(goal);
+    assert(!std::isnan(next_sample.x()) && !std::isnan(next_sample.y()));
+    
+    // Test adding observation
+    optimizer.add_observation(Point2D(4, 4), 4.0);
+    
+    // Get safe parameters
+    auto safe_params = optimizer.get_safe_parameters();
+    assert(!safe_params.empty());
+    
+    std::cout << "Gaussian optimization tests passed!" << std::endl;
 }
 
 int main() {
@@ -145,6 +189,7 @@ int main() {
         test_disjoint_set();
         test_config();
         test_reactive_planner();
+        test_gaussian_optimization();
         
         std::cout << "\nAll tests passed successfully!" << std::endl;
         return 0;

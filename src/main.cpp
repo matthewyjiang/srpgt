@@ -3,6 +3,7 @@
 #include "polygeom.h"
 #include "reactive_planner.h"
 #include "disjoint_set.h"
+#include "gaussian_optimization.h"
 #include <iostream>
 #include <vector>
 #include <chrono>
@@ -38,7 +39,7 @@ int main(int argc, char* argv[]) {
                  config.get_double("robot", "GOAL_Y", 360.0));
     
     std::cout << "Robot initialized at: (" << robot_x << ", " << robot_y << ")" << std::endl;
-    std::cout << "Goal set to: (" << goal.x << ", " << goal.y << ")" << std::endl;
+    std::cout << "Goal set to: (" << goal.x() << ", " << goal.y() << ")" << std::endl;
     
     // Create some test obstacles
     std::vector<Polygon> obstacles;
@@ -137,6 +138,52 @@ int main(int argc, char* argv[]) {
     
     std::cout << "Final robot position: " << robot.to_string() << std::endl;
     std::cout << "Trail length: " << robot.trail().size() << " points" << std::endl;
+    
+    // Test Gaussian Process optimization functionality
+    std::cout << "\nTesting Gaussian Process optimization..." << std::endl;
+    
+    try {
+        GPOptimizationParams gp_params;
+        gp_params.kernel_variance = config.get_double("optimization", "KERNEL_VARIANCE", 2.0);
+        gp_params.kernel_lengthscale = config.get_double("optimization", "KERNEL_LENGTHSCALE", 5.0);
+        gp_params.beta = config.get_double("optimization", "BETA", 2.0);
+        gp_params.lipschitz = config.get_double("optimization", "LIPSCHITZ", 0.1);
+        gp_params.threshold = config.get_double("environment", "THRESHOLD", 0.0);
+        gp_params.num_expanders = config.get_int("optimization", "NUM_EXPANDERS", 20);
+        
+        GaussianOptimizer optimizer(gp_params);
+        
+        // Set parameter space bounds
+        optimizer.set_parameter_bounds(0, 400, 0, 600, 50);
+        
+        // Initialize with some training data (robot's trail)
+        std::vector<Point2D> initial_points;
+        std::vector<double> initial_values;
+        
+        const auto& trail = robot.trail();
+        for (size_t i = 0; i < std::min(trail.size(), size_t(10)); ++i) {
+            initial_points.push_back(trail[i]);
+            // Simulate some objective function value
+            double dist_from_goal = distance(trail[i], goal);
+            initial_values.push_back(-dist_from_goal); // Negative distance as we want to minimize distance
+        }
+        
+        if (!initial_points.empty()) {
+            optimizer.initialize(initial_points, initial_values);
+            
+            // Get next sampling point
+            Point2D next_sample = optimizer.get_next_sample(goal);
+            
+            auto prediction = optimizer.predict(next_sample);
+            std::cout << "Next recommended sampling point: (" << next_sample.x() << ", " << next_sample.y() << ")" << std::endl;
+            std::cout << "Predicted value: " << prediction.first << " ± " << prediction.second << std::endl;
+            std::cout << "Number of safe parameters: " << optimizer.get_safe_parameters().size() << std::endl;
+        }
+        
+        std::cout << "Gaussian Process optimization test completed!" << std::endl;
+    } catch (const std::exception& e) {
+        std::cout << "Gaussian Process test failed: " << e.what() << std::endl;
+    }
     
     // Test disjoint set functionality
     std::cout << "\nTesting disjoint set functionality..." << std::endl;

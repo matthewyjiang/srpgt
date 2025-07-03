@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.17)
 project(SRPGT VERSION 1.0.0 LANGUAGES CXX)
 
 # Set C++ standard
@@ -10,9 +10,14 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -O2")
 
 # Include directories
 include_directories(include)
+include_directories(third_party/gaussian-process/include)
 
 # Find required packages
 find_package(Threads REQUIRED)
+find_package(Eigen3 3.3 REQUIRED NO_MODULE)
+
+# Add Gaussian Process library
+add_subdirectory(third_party/gaussian-process)
 
 # Source files
 set(SOURCES
@@ -21,6 +26,7 @@ set(SOURCES
     src/reactive_planner.cpp
     src/disjoint_set.cpp
     src/config.cpp
+    src/gaussian_optimization.cpp
 )
 
 # Header files
@@ -31,10 +37,12 @@ set(HEADERS
     include/disjoint_set.h
     include/config.h
     include/common.h
+    include/gaussian_optimization.h
 )
 
 # Create library
 add_library(srpgt_lib ${SOURCES} ${HEADERS})
+target_link_libraries(srpgt_lib PUBLIC Eigen3::Eigen gp_lib)
 
 # Main executable
 add_executable(srpgt src/main.cpp)

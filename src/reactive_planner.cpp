@@ -54,7 +54,7 @@ double triangle_switch(const Point2D& position, const Triangle& triangle,
         Vector2D edge = triangle.vertices[j] - triangle.vertices[i];
         Vector2D to_point = position - triangle.vertices[i];
         
-        double edge_length_sq = edge.x * edge.x + edge.y * edge.y;
+        double edge_length_sq = edge.x() * edge.x() + edge.y() * edge.y();
         if (edge_length_sq < EPS) continue;
         
         double t = dot(to_point, edge) / edge_length_sq;

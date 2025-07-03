@@ -4,46 +4,13 @@
 #include <array>
 #include <cmath>
 #include <memory>
+#include <Eigen/Dense>
 
 namespace srpgt {
 
-// Basic 2D point structure
-struct Point2D {
-    double x, y;
-    
-    Point2D() : x(0.0), y(0.0) {}
-    Point2D(double x_, double y_) : x(x_), y(y_) {}
-    
-    Point2D operator+(const Point2D& other) const {
-        return Point2D(x + other.x, y + other.y);
-    }
-    
-    Point2D operator-(const Point2D& other) const {
-        return Point2D(x - other.x, y - other.y);
-    }
-    
-    Point2D operator*(double scalar) const {
-        return Point2D(x * scalar, y * scalar);
-    }
-    
-    Point2D& operator+=(const Point2D& other) {
-        x += other.x;
-        y += other.y;
-        return *this;
-    }
-    
-    double norm() const {
-        return std::sqrt(x * x + y * y);
-    }
-    
-    Point2D normalized() const {
-        double n = norm();
-        return (n > 1e-10) ? Point2D(x / n, y / n) : Point2D(0, 0);
-    }
-};
-
-// 2D vector typedef
-using Vector2D = Point2D;
+// Use Eigen for 2D vectors and points
+using Point2D = Eigen::Vector2d;
+using Vector2D = Eigen::Vector2d;
 
 // Polygon representation
 using Polygon = std::vector<Point2D>;
@@ -58,11 +25,11 @@ inline double distance(const Point2D& a, const Point2D& b) {
 }
 
 inline double dot(const Vector2D& a, const Vector2D& b) {
-    return a.x * b.x + a.y * b.y;
+    return a.dot(b);
 }
 
 inline double cross(const Vector2D& a, const Vector2D& b) {
-    return a.x * b.y - a.y * b.x;
+    return a.x() * b.y() - a.y() * b.x();
 }
 
 } // namespace srpgt

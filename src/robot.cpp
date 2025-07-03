@@ -24,7 +24,7 @@ void Robot::update(const Vector2D& velocity) {
     }
     
     // Calculate direction angle
-    angle_ = std::atan2(velocity.y, velocity.x);
+    angle_ = std::atan2(velocity.y(), velocity.x());
     
     // Update position with speed limiting
     Vector2D term = velocity * move_speed_;
@@ -35,8 +35,8 @@ void Robot::update(const Vector2D& velocity) {
     pos_ += term;
     
     // Keep robot within screen boundaries (commented out like in original)
-    // pos_.x = std::max(radius_, std::min(screen_width_ - radius_, pos_.x));
-    // pos_.y = std::max(radius_, std::min(screen_height_ - radius_, pos_.y));
+    // pos_.x() = std::max(radius_, std::min(screen_width_ - radius_, pos_.x()));
+    // pos_.y() = std::max(radius_, std::min(screen_height_ - radius_, pos_.y()));
 }
 
 void Robot::clear_trail() {
@@ -45,7 +45,7 @@ void Robot::clear_trail() {
 
 std::string Robot::to_string() const {
     std::ostringstream oss;
-    oss << "Robot[pos=(" << pos_.x << "," << pos_.y 
+    oss << "Robot[pos=(" << pos_.x() << "," << pos_.y() 
         << "), angle=" << angle_ 
         << ", radius=" << radius_ 
         << ", trail_points=" << trail_.size() << "]";
