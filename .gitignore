@@ -3,3 +3,17 @@ __pycache__
 .vscode/
 .claude/
 *.png
+
+# C++ build artifacts
+build/
+*.o
+*.so
+*.a
+*.exe
+srpgt
+srpgt_test
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.cmake

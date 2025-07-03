@@ -1,3 +1,6 @@
 [submodule "SafeOpt"]
 	path = SafeOpt
 	url = git@github.com:matthewyjiang/SafeOpt.git
+[submodule "third_party/gaussian-process"]
+	path = third_party/gaussian-process
+	url = https://github.com/matthewyjiang/gaussian-process.git
