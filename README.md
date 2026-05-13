@@ -13,7 +13,7 @@ This project provides a simulation framework for safe and reactive navigation of
 ## Prerequisites
 
 - Python 3.9
-- Conda (for virtual environment management)
+- uv (for Python package and environment management)
 
 ## Setup Instructions
 
@@ -22,16 +22,10 @@ This project provides a simulation framework for safe and reactive navigation of
    git clone git@github.com:matthewyjiang/reactive-navigation.git -b revision2
    ```
 
-2. Create and activate a Conda virtual environment:
-   ```bash
-   conda create -n reactivenav python=3.9
-   conda activate reactivenav
-   ```
-
-3. Navigate to the project directory and install dependencies:
+2. Install dependencies with uv:
    ```bash
    cd reactive-navigation
-   pip install -r requirements.txt
+   uv sync
    ```
 
 
@@ -39,7 +33,7 @@ This project provides a simulation framework for safe and reactive navigation of
 
 1. Start the simulation:
    ```bash
-   python3 main.py
+   uv run python main.py
    ```
 
 2. Use the following controls during the simulation:

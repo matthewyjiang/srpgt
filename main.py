@@ -13,7 +13,7 @@ import shapely as sp
 from shapely.geometry import Polygon, Point
 import pyvoro
 from PIL import Image
-from SafeOpt.safeopt import SafeOpt
+from safeopt import SafeOpt
 
 # Local modules
 from robot import Robot
@@ -59,8 +59,16 @@ def create_collage(frames, save_path, columns=5, num_frames=10, buffer_size=10):
         print("No frames to create a collage.")
         return
 
+    if num_frames <= 0:
+        print("No frames requested for collage.")
+        return
+
+    columns = max(1, columns)
+
     total_frames = len(frames)
-    if total_frames <= num_frames:
+    if num_frames == 1:
+        selected_frames = [frames[-1]]
+    elif total_frames <= num_frames:
         selected_frames = frames
     else:
         indices = [round(i * (total_frames - 1) / (num_frames - 1)) for i in range(num_frames)]

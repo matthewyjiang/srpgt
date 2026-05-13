@@ -1,5 +1,7 @@
 __pycache__
+/.venv/
 /venv/
+*.egg-info/
 .vscode/
 .claude/
 *.png
