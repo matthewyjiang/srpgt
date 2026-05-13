@@ -3,7 +3,7 @@ os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 
 # Standard libraries
 import numpy as np
-import tomli
+import tomllib
 
 # Third-party libraries
 import pygame
@@ -11,7 +11,7 @@ import GPy
 from scipy.spatial import ConvexHull
 import shapely as sp
 from shapely.geometry import Polygon, Point
-import pyvoro
+import pyvoro2.planar as pyvoro2_planar
 from PIL import Image
 from safeopt import SafeOpt
 
@@ -102,7 +102,7 @@ def load_config(config_file="config.toml"):
     """
     try:
         with open(config_file, "rb") as f:
-            loaded_config = tomli.load(f)
+            loaded_config = tomllib.load(f)
 
         # Update the global CONFIG with loaded values
         for section in loaded_config:
@@ -348,6 +348,12 @@ def project_goal_to_polygon(goal, polygon):
         return np.array([projected_point.x, projected_point.y])
     return goal
 
+def order_polygon_vertices(vertices):
+    vertices = np.asarray(vertices, dtype=float)
+    center = vertices.mean(axis=0)
+    order = np.argsort(np.arctan2(vertices[:, 1] - center[1], vertices[:, 0] - center[0]))
+    return vertices[order]
+
 def compute_local_workspace_polygon(robot, robot_pos_transformed, obstacles_pos, obstacles_radii, screen_width, screen_height):
 
     # Gather the positions of the robot and obstacles
@@ -362,9 +368,17 @@ def compute_local_workspace_polygon(robot, robot_pos_transformed, obstacles_pos,
     if len(points) == 1:
         return Polygon([(0, 0), (screen_width, 0), (screen_width, screen_height), (0, screen_height)])
 
-    cells = pyvoro.compute_2d_voronoi(points, [[0, screen_width], [0, screen_height]], 2.0, radii=radii)
+    domain = pyvoro2_planar.RectangularCell(((0, screen_width), (0, screen_height)), periodic=(False, False))
+    cells = pyvoro2_planar.compute(
+        points,
+        domain=domain,
+        mode='power',
+        radii=radii,
+        include_empty=True,
+        duplicate_check='raise',
+    )
 
-    return Polygon(cells[0]['vertices'])
+    return Polygon(order_polygon_vertices(cells[0]['vertices']))
 
 def draw_environment(screen, surf, polygon_list, local_workspace_polygon, enclosing_workspace_hull_polygon, obstacles, next_parameters, BUFFER_SIZE):
     """

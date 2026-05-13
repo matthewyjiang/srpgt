@@ -12,7 +12,7 @@ This project provides a simulation framework for safe and reactive navigation of
 
 ## Prerequisites
 
-- Python 3.10 (`pyvoro` does not currently build on newer Python releases)
+- Python 3.12
 - uv (for Python package and environment management)
 
 ## Setup Instructions

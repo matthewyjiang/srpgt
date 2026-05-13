@@ -1,19 +1,15 @@
-import pyvoro
+import pyvoro2.planar as pyvoro2_planar
 
 # Define points
 points = [[5.0, 7.0], [1.7, 3.2], [8.1, 6.3]]
 
 # Define bounding box limits
-limits = [[0.0, 10.0], [0.0, 10.0]]
-
-# Set dispersion (block size)
-dispersion = 2.0
+domain = pyvoro2_planar.RectangularCell(((0.0, 10.0), (0.0, 10.0)), periodic=(False, False))
 
 # Compute Voronoi cells
-cells = pyvoro.compute_2d_voronoi(
+cells = pyvoro2_planar.compute(
     points,
-    limits,
-    dispersion
+    domain=domain,
 )
 
 # Extract vertices for the first point
