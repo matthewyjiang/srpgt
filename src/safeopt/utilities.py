@@ -6,7 +6,7 @@ Author: Felix Berkenkamp (befelix at inf dot ethz dot ch)
 
 from __future__ import print_function, absolute_import, division
 
-from collections import Sequence            # isinstance(...,Sequence)
+from collections.abc import Sequence        # isinstance(...,Sequence)
 import numpy as np
 import scipy as sp
 import matplotlib.pyplot as plt

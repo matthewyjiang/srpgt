@@ -33,7 +33,7 @@ import matplotlib.path as mpath
 import shapely as sp
 import tripy, time, math
 from shapely.geometry import Polygon
-from shapely.ops import cascaded_union
+from shapely.ops import unary_union
 from operator import itemgetter
 from itertools import groupby
 
@@ -530,7 +530,7 @@ def polytriangulation(xy,workspace,touching_boundary):
 
     # Build the tree by expanding nodes until the stack is empty
     # (The stack will be empty when the leaf nodes consist of only one edge)
-    while len(stack) is not 0:
+    while len(stack) != 0:
         # Pop the first element of the stack and delete it from the stack
         expanded_node = stack[0]
         del(stack[0])
@@ -562,7 +562,9 @@ def polytriangulation(xy,workspace,touching_boundary):
                 # Find the 3rd point of the child triangle (that does not belong to the shared edge) and arrange the vertices so that this is the 3rd point
                 nrows, ncols = input_triangles[i].shape
                 dtype = {'names':['f{}'.format(j) for j in range(ncols)], 'formats':ncols * [input_triangles[i].dtype]}
-                set_diff = np.setdiff1d(input_triangles[i].view(dtype), np.array(tree[tree_index]['adj_edge'].transpose()).view(dtype))
+                triangle_vertices = np.ascontiguousarray(input_triangles[i])
+                adjacent_vertices = np.ascontiguousarray(tree[tree_index]['adj_edge'].transpose())
+                set_diff = np.setdiff1d(triangle_vertices.view(dtype), adjacent_vertices.view(dtype))
                 third_vertex = set_diff.view(input_triangles[i].dtype).reshape(-1, ncols)
                 tree[tree_index]['vertices'] = np.array([tree[tree_index]['adj_edge'][1], tree[tree_index]['adj_edge'][0], third_vertex[0]]) # change the direction of adj_edge to make the child CCW again 
 
@@ -573,7 +575,7 @@ def polytriangulation(xy,workspace,touching_boundary):
                 stack.append(tree[tree_index])
 
     # As a final step, sort the tree as a stack, in order of descending depth
-    tree = sorted(tree, key=itemgetter('depth'), reverse=True)
+    tree = sorted([node for node in tree if 'depth' in node], key=itemgetter('depth'), reverse=True)
 
     # Make sure to change the node and predecessor indices since the indices have now changed
     indices_new = np.zeros(len(tree))
@@ -654,7 +656,7 @@ def polyconvexdecomposition(xy,workspace,touching_boundary):
     stack = [tree[0]]
 
     # Build the tree by expanding nodes until the stack is empty
-    while len(stack) is not 0:
+    while len(stack) != 0:
         # Pop the first element of the stack and delete it from the stack
         expanded_node = stack[0]
         del(stack[0])
@@ -738,7 +740,7 @@ def polyconvexdecomposition(xy,workspace,touching_boundary):
                 stack.append(tree[tree_index])
 
     # As a final step, sort the tree as a stack, in order of descending depth
-    tree = sorted(tree, key=itemgetter('depth'), reverse=True)
+    tree = sorted([node for node in tree if 'depth' in node], key=itemgetter('depth'), reverse=True)
 
     # Make sure to change the node and predecessor indices since the indices have now changed
     indices_new = np.zeros(len(tree))
@@ -795,7 +797,7 @@ def polyunion(xy1,xy2):
     polygons = [polygon1,polygon2]
 
     # Find the union and orient appropriately
-    output = cascaded_union(polygons)
+    output = unary_union(polygons)
     output = sp.geometry.polygon.orient(output, 1.0) # orient polygon to be CCW
 
     # Find the actual vertices

@@ -197,9 +197,9 @@ def diffeoTreeTriangulation(PolygonVertices, DiffeoParams):
                 # If the difference operation created a multipolygon, keep only the polygon that contains the barycenter of the extended triangle
                 if candidate_polygon.geom_type == 'MultiPolygon':
                     point_to_consider = Point((tree[i]['vertices'][0][0]+tree[i]['vertices'][1][0]+tree[i]['center'][0][0])/3.0, (tree[i]['vertices'][0][1]+tree[i]['vertices'][1][1]+tree[i]['center'][0][1])/3.0)
-                    for k in range(len(candidate_polygon)):
-                        if candidate_polygon[k].contains(point_to_consider):
-                            candidate_polygon = candidate_polygon[k]
+                    for polygon in candidate_polygon.geoms:
+                        if polygon.contains(point_to_consider):
+                            candidate_polygon = polygon
                             break
         
         # Extract final vertices

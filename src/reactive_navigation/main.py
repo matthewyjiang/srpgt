@@ -250,7 +250,10 @@ def setup_obstacles(parameter_set_filtered, robot):
     for polygon in polygon_list:
         obstacles = obstacles.difference(polygon)
 
-    obstacles = list(obstacles)
+    if obstacles.geom_type == 'Polygon':
+        obstacles = [obstacles]
+    else:
+        obstacles = [geometry for geometry in obstacles.geoms if geometry.geom_type == 'Polygon']
 
     for i in range(len(obstacles)):
         obstacles[i] = obstacles[i].simplify(SIMPLIFICATION_CONSTANT, preserve_topology=True)
@@ -259,7 +262,9 @@ def setup_obstacles(parameter_set_filtered, robot):
     diffeo_tree_array = []
     for i in range(len(obstacles)):
         coords = np.vstack((obstacles[i].exterior.coords.xy[0],obstacles[i].exterior.coords.xy[1])).transpose()
-        diffeo_tree_array.append(diffeoTreeTriangulation(coords, diffeo_params))
+        tree = diffeoTreeTriangulation(coords, diffeo_params)
+        if tree and np.isfinite(tree[-1]['radius']) and tree[-1]['radius'] > 0:
+            diffeo_tree_array.append(tree)
 
 
     obstacles_decomposed_centers = []
@@ -347,8 +352,15 @@ def compute_local_workspace_polygon(robot, robot_pos_transformed, obstacles_pos,
 
     # Gather the positions of the robot and obstacles
 
-    points = [robot_pos_transformed] + obstacles_pos
-    radii = [robot.radius] + obstacles_radii
+    points = [robot_pos_transformed]
+    radii = [robot.radius]
+    for obstacle_pos, obstacle_radius in zip(obstacles_pos, obstacles_radii):
+        if np.all(np.isfinite(obstacle_pos)) and np.isfinite(obstacle_radius) and obstacle_radius > 0:
+            points.append(obstacle_pos)
+            radii.append(obstacle_radius)
+
+    if len(points) == 1:
+        return Polygon([(0, 0), (screen_width, 0), (screen_width, screen_height), (0, screen_height)])
 
     cells = pyvoro.compute_2d_voronoi(points, [[0, screen_width], [0, screen_height]], 2.0, radii=radii)
 

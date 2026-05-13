@@ -7,7 +7,7 @@ Authors: - Felix Berkenkamp (befelix at inf dot ethz dot ch)
 
 from __future__ import print_function, absolute_import, division
 
-from collections import Sequence
+from collections.abc import Sequence
 from functools import partial
 
 import numpy as np
@@ -373,10 +373,10 @@ class SafeOpt(GaussianProcessOptimization):
 
         # Value intervals
         self.Q = np.empty((self.inputs.shape[0], 2 * len(self.gps)),
-                          dtype=np.float)
+                          dtype=float)
 
         # Safe set
-        self.S = np.zeros(self.inputs.shape[0], dtype=np.bool)
+        self.S = np.zeros(self.inputs.shape[0], dtype=bool)
 
         # Switch to use confidence intervals for safety
         if lipschitz is None:
@@ -544,7 +544,7 @@ class SafeOpt(GaussianProcessOptimization):
             return array.argsort()[::-1]
 
         # set of safe expanders
-        G_safe = np.zeros(np.count_nonzero(s), dtype=np.bool)
+        G_safe = np.zeros(np.count_nonzero(s), dtype=bool)
 
         if goal is None:
             if not full_sets:
@@ -836,14 +836,14 @@ class SafeOptSwarm(GaussianProcessOptimization):
         velocities: ndarray
             The estimated optimal velocities in each direction.
         """
-        parameters = np.zeros((1, self.gp.input_dim), dtype=np.float)
+        parameters = np.zeros((1, self.gp.input_dim), dtype=float)
         velocities = np.empty((len(self.gps), self.gp.input_dim),
-                              dtype=np.float)
+                              dtype=float)
 
         for i, gp in enumerate(self.gps):
             for j in range(self.gp.input_dim):
                 tmp_velocities = np.zeros((1, self.gp.input_dim),
-                                          dtype=np.float)
+                                          dtype=float)
 
                 # lower and upper bounds on velocities
                 upper_velocity = 1000.
@@ -964,7 +964,7 @@ class SafeOptSwarm(GaussianProcessOptimization):
                 # For expanders, the interest function is updated depending on
                 # the lower bounds
                 interest_function = (len(self.gps) *
-                                     np.ones(np.shape(values), dtype=np.float))
+                                     np.ones(np.shape(values), dtype=float))
             elif is_maximizer:
                 improvement = upper_bound - self.best_lower_bound
                 interest_function = expit(10 * improvement / self.scaling[0])
@@ -973,8 +973,8 @@ class SafeOptSwarm(GaussianProcessOptimization):
                 raise AssertionError("Invalid swarm type")
 
         # boolean mask that tell if the particles are safe according to all gps
-        global_safe = np.ones(particles.shape[0], dtype=np.bool)
-        total_penalty = np.zeros(particles.shape[0], dtype=np.float)
+        global_safe = np.ones(particles.shape[0], dtype=bool)
+        total_penalty = np.zeros(particles.shape[0], dtype=float)
 
         for i, (gp, scaling) in enumerate(zip(self.gps, self.scaling)):
             # Only recompute confidence intervals for constraints
@@ -1110,7 +1110,7 @@ class SafeOptSwarm(GaussianProcessOptimization):
 
             # this mask keeps track of the points that we have added in the
             # safe set to account for them when adding a new point
-            mask = np.zeros(m, dtype=np.bool)
+            mask = np.zeros(m, dtype=bool)
             mask[:initial_safe] = True
 
             for j in range(n):
@@ -1136,7 +1136,7 @@ class SafeOptSwarm(GaussianProcessOptimization):
             return swarm.global_best.copy(), np.max(swarm.best_values)
 
         # compute the variance of the point picked
-        var = np.empty(len(self.gps), dtype=np.float)
+        var = np.empty(len(self.gps), dtype=float)
         # max_std_dev = 0.
         for i, (gp, scaling) in enumerate(zip(self.gps, self.scaling)):
             var[i] = gp.predict_noiseless(swarm.global_best[None, :])[1]

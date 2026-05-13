@@ -121,7 +121,7 @@ def visualize_diffeoDeterminant_triangulation(Polygons, RobotRadius, PlotBounds,
 			# Check for inclusion in any of the polygons
 			for k in range(len(polygon_list_merged)):
 				if polygon_list_merged[k].contains(candidate_point):
-					data_points[j][i] = numpy.NAN
+					data_points[j][i] = numpy.nan
 					collision = True
 					break
 				else:
@@ -253,7 +253,7 @@ def visualize_diffeoDeterminant_convex(Polygons, RobotRadius, PlotBounds, NumPoi
 			# Check for inclusion in any of the polygons
 			for k in range(len(polygon_list_merged)):
 				if polygon_list_merged[k].contains(candidate_point):
-					data_points[j][i] = numpy.NAN
+					data_points[j][i] = numpy.nan
 					collision = True
 					break
 				else:
@@ -387,7 +387,7 @@ def visualize_lyapunov_triangulation(Polygons, RobotRadius, PlotBounds, NumPoint
 			# Check for inclusion in any of the polygons
 			for k in range(len(polygon_list_merged)):
 				if polygon_list_merged[k].contains(candidate_point):
-					data_points[j][i] = numpy.NAN
+					data_points[j][i] = numpy.nan
 					collision = True
 					break
 				else:

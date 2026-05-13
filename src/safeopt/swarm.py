@@ -51,11 +51,11 @@ class SwarmOptimization(object):
         self.ndim = len(velocity)
         self.swarm_size = swarm_size
 
-        self.positions = np.empty((swarm_size, len(velocity)), dtype=np.float)
+        self.positions = np.empty((swarm_size, len(velocity)), dtype=float)
         self.velocities = np.empty_like(self.positions)
 
         self.best_positions = np.empty_like(self.positions)
-        self.best_values = np.empty(len(self.best_positions), dtype=np.float)
+        self.best_values = np.empty(len(self.best_positions), dtype=float)
         self.global_best = None
 
     @property
