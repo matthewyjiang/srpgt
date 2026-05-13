@@ -35,9 +35,9 @@ from shapely.geometry import Point, LineString
 from shapely.geometry.polygon import Polygon
 
 # Reactive planner imports
-from reactive_planner_lib import LIDARClass, completeLIDAR2D, compensateObstacleLIDAR2D, readLIDAR2D
-from reactive_planner_lib import polygonDiffeoTriangulation, polygonDiffeoConvex, diffeoTreeTriangulation, diffeoTreeConvex, triangleDiffeo, polygonDiffeo, polygonImplicit, triangleSwitch, polygonSwitch
-from reactive_planner_lib import localfreespaceLIDAR2D
+from reactive_navigation.reactive_planner import LIDARClass, completeLIDAR2D, compensateObstacleLIDAR2D, readLIDAR2D
+from reactive_navigation.reactive_planner import polygonDiffeoTriangulation, polygonDiffeoConvex, diffeoTreeTriangulation, diffeoTreeConvex, triangleDiffeo, polygonDiffeo, polygonImplicit, triangleSwitch, polygonSwitch
+from reactive_navigation.reactive_planner import localfreespaceLIDAR2D
 
 def visualize_diffeoDeterminant_triangulation(Polygons, RobotRadius, PlotBounds, NumPoints, DiffeoParams):
 	"""

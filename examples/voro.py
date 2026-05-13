@@ -24,4 +24,3 @@ vertices = cell['vertices']
 print(f"Vertices of the Voronoi cell around point {points[point_index]}:")
 for vertex in vertices:
     print(vertex)
-

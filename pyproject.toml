@@ -26,8 +26,9 @@ dependencies = [
     "tripy==1.0.0",
 ]
 
-[tool.setuptools]
-packages = ["safeopt"]
+[project.scripts]
+reactive-navigation = "reactive_navigation.main:main"
 
-[tool.setuptools.package-dir]
-safeopt = "SafeOpt/safeopt"
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["reactive_navigation*", "safeopt*"]

@@ -19,12 +19,12 @@ This project provides a simulation framework for safe and reactive navigation of
 
 1. Clone the repository:
    ```bash
-   git clone git@github.com:matthewyjiang/reactive-navigation.git -b revision2
+   git clone git@github.com:matthewyjiang/srpgt.git
    ```
 
 2. Install dependencies with uv:
    ```bash
-   cd reactive-navigation
+   cd srpgt
    uv sync
    ```
 
@@ -33,7 +33,7 @@ This project provides a simulation framework for safe and reactive navigation of
 
 1. Start the simulation:
    ```bash
-   uv run python main.py
+   uv run reactive-navigation
    ```
 
 2. Use the following controls during the simulation:

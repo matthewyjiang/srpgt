@@ -16,10 +16,10 @@ from PIL import Image
 from safeopt import SafeOpt
 
 # Local modules
-from robot import Robot
+from .robot import Robot
 from concave_hull import concave_hull
-from disjoint import build_disjoint_sets
-from reactive_planner_lib import diffeoTreeTriangulation, polygonDiffeoTriangulation
+from .disjoint import build_disjoint_sets
+from .reactive_planner import diffeoTreeTriangulation, polygonDiffeoTriangulation
 
 # Configuration constants - loaded from config.toml if available
 CONFIG = {

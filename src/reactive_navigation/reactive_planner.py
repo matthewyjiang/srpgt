@@ -33,8 +33,8 @@ from shapely.geometry import Polygon, Point, LineString, LinearRing
 
 
 # Geometry imports
-from polygeom_lib import cvxpolyxhplane, cvxpolyerode, polydist, polyxline, inpolygon, cvxpolyintersect, polyxray
-from polygeom_lib import polytriangulation, polycvxdecomp, polyconvexdecomposition
+from .polygeom import cvxpolyxhplane, cvxpolyerode, polydist, polyxline, inpolygon, cvxpolyintersect, polyxray
+from .polygeom import polytriangulation, polycvxdecomp, polyconvexdecomposition
 
 
 def diffeoTreeTriangulation(PolygonVertices, DiffeoParams):
@@ -860,4 +860,3 @@ def insideImplicitPolygon(Position, PolygonUsed, DiffeoParams):
         gamma = gamma + hyperplane[i] - (gamma**p+hyperplane[i]**p)**(1/p)
 
     return gamma, gammad, gammadd
-

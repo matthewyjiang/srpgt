@@ -1,5 +1,5 @@
 import numpy
-import tests.visualization as visualization
+import examples.visualization as visualization
 robot_radius = 0.25
 bounds = numpy.array([0, 5, -3, 3])
 num_points = numpy.array([101, 101])
